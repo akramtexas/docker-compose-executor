@@ -7,14 +7,8 @@ docker/docker-compose.yml
 .project
 .vscode/
 
+# binary files
+main/main
 # log dirs
 **/logs
 
-# snap files
-*.snap
-*.bz2
-*.pyc
-parts/*
-prime/*
-stage/*
-snap/.snapcraft/*

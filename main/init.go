@@ -15,17 +15,10 @@ package main
 
 import (
 	"github.com/edgexfoundry/docker-compose-executor/interfaces"
-	"github.com/edgexfoundry/docker-compose-executor/logger"
 )
 
 // Global variables
 var Configuration *interfaces.ConfigurationStruct
-
-func main() {
-	// TODO: Setup Logging (Refine this admittedly kludgy setup..)
-	logTarget := setLoggingTarget()
-	logs.BuildLoggingClient(Configuration, logTarget)
-}
 
 func setLoggingTarget() string {
 	logTarget := Configuration.LoggingRemoteURL

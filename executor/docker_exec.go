@@ -5,8 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/edgexfoundry/docker-compose-executor/logger"
 )
 
 // TODO: Externalize these by putting in a properties file.
@@ -62,7 +60,7 @@ func findDockerContainerStatus(service string, status string) bool {
 	cmdName := "docker"
 	cmdArgs := []string{"ps"}
 	if cmdOut, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
-		logs.LoggingClient.Error("error running the docker command", "error message", err.Error())
+		LoggingClient.Error("error running the docker command", "error message", err.Error())
 		os.Exit(1)
 	}
 	dockerOutput := string(cmdOut)
@@ -72,18 +70,18 @@ func findDockerContainerStatus(service string, status string) bool {
 
 			if status == "Up" {
 				if strings.Contains(line, "Up") {
-					logs.LoggingClient.Debug("container started", "service name", service, "details", line)
+					LoggingClient.Debug("container started", "service name", service, "details", line)
 					return true
 				} else {
-					logs.LoggingClient.Warn("container NOT started", "service name", service)
+					LoggingClient.Warn("container NOT started", "service name", service)
 					return false
 				}
 			} else if status == "Exited" {
 				if strings.Contains(line, "Exited") {
-					logs.LoggingClient.Debug("container stopped", "service name", service, "details", line)
+					LoggingClient.Debug("container stopped", "service name", service, "details", line)
 					return true
 				} else {
-					logs.LoggingClient.Warn("container NOT stopped", "service name", service)
+					LoggingClient.Warn("container NOT stopped", "service name", service)
 					return false
 				}
 			}
@@ -101,7 +99,7 @@ func ExecuteDockerCommands(service string, operation string) error {
 		return nil
 	} else {
 		newError := fmt.Errorf("unknown service: %v", service)
-		logs.LoggingClient.Error(newError.Error())
+		LoggingClient.Error(newError.Error())
 
 		return newError
 	}
@@ -124,7 +122,7 @@ func runDockerCommands(service string, dockerService string, operation string) {
 		return attempt < 5, err
 	})
 	if err != nil {
-		logs.LoggingClient.Error("unable to find the path to where the docker command will be run", "error message", err.Error())
+		LoggingClient.Error("unable to find the path to where the docker command will be run", "error message", err.Error())
 	}
 
 	cmdArgs := []string{operation, dockerService}
@@ -133,17 +131,17 @@ func runDockerCommands(service string, dockerService string, operation string) {
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		logs.LoggingClient.Warn("docker command failed", "error message", err.Error())
-		logs.LoggingClient.Warn("associated ouptut", "error message", out)
+		LoggingClient.Warn("docker command failed", "error message", err.Error())
+		LoggingClient.Warn("associated ouptut", "error message", out)
 	}
 
 	if operation == "start" {
 		if !findDockerContainerStatus(service, "Up") {
-			logs.LoggingClient.Warn("docker start operation failed", "service name", service)
+			LoggingClient.Warn("docker start operation failed", "service name", service)
 		}
 	} else if operation == "stop" {
 		if !findDockerContainerStatus(service, "Exited") {
-			logs.LoggingClient.Warn("docker stop operation failed", "service name", service)
+			LoggingClient.Warn("docker stop operation failed", "service name", service)
 		}
 	}
 }
@@ -156,7 +154,7 @@ func findPathToRunDocker() (string, error) {
 	cmd := exec.Command(cmdName)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		logs.LoggingClient.Error("exec.Command(cmdName) failed", "error message", err.Error())
+		LoggingClient.Error("exec.Command(cmdName) failed", "error message", err.Error())
 	}
 	pathOutput := string(out)
 

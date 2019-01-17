@@ -17,7 +17,9 @@ GOCGO=CGO_ENABLED=1 go
 DOCKERS=docker_docker-compose-executor
 .PHONY: $(DOCKERS)
 
-MICROSERVICES=cmd/config-seed/config-seed cmd/export-client/export-client cmd/export-distro/export-distro cmd/core-metadata/core-metadata cmd/core-data/core-data cmd/core-command/core-command cmd/support-logging/support-logging cmd/support-notifications/support-notifications cmd/sys-mgmt-agent/sys-mgmt-agent cmd/support-scheduler/support-scheduler
+MICROSERVICES=cmd/config-seed/config-seed cmd/export-client/expo
+
+rt-client cmd/export-distro/export-distro cmd/core-metadata/core-metadata cmd/core-data/core-data cmd/core-command/core-command cmd/support-logging/support-logging cmd/support-notifications/support-notifications cmd/sys-mgmt-agent/sys-mgmt-agent cmd/support-scheduler/support-scheduler
 
 .PHONY: $(MICROSERVICES)
 

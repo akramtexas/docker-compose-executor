@@ -12,10 +12,9 @@
  * the License.
  *******************************************************************************/
 
-package logs
+package executor
 
 import (
-	"github.com/edgexfoundry/docker-compose-executor/executor"
 	"github.com/edgexfoundry/docker-compose-executor/interfaces"
 	"github.com/edgexfoundry/edgex-go/pkg/clients/logging"
 )
@@ -23,5 +22,5 @@ import (
 var LoggingClient logger.LoggingClient
 
 func BuildLoggingClient(config *interfaces.ConfigurationStruct, logTarget string) {
-	LoggingClient = logger.NewClient(executor.SystemManagementAgentServiceKey, config.EnableRemoteLogging, logTarget, config.LoggingLevel)
+	LoggingClient = logger.NewClient(SystemManagementAgentServiceKey, config.EnableRemoteLogging, logTarget, config.LoggingLevel)
 }
