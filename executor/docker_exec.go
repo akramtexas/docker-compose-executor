@@ -9,6 +9,7 @@ import (
 	"github.com/edgexfoundry/docker-compose-executor/logger"
 )
 
+// TODO: Externalize these by putting in a properties file.
 const (
 	ConfigSeedServiceKey            = "edgex-config-seed"
 	CoreCommandServiceKey           = "edgex-core-command"
@@ -22,7 +23,7 @@ const (
 	SupportSchedulerServiceKey      = "edgex-support-scheduler"
 )
 
-// Externalize by putting in a properties...
+// TODO: Externalize these by putting in a properties file.
 var services = map[string]string{
 	SupportNotificationsServiceKey: "Notifications",
 	CoreCommandServiceKey:          "Command",

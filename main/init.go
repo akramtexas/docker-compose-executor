@@ -22,7 +22,7 @@ import (
 var Configuration *interfaces.ConfigurationStruct
 
 func main() {
-	// Setup Logging
+	// TODO: Setup Logging (Refine this admittedly kludgy setup..)
 	logTarget := setLoggingTarget()
 	logs.BuildLoggingClient(Configuration, logTarget)
 }

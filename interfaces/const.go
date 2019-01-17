@@ -13,8 +13,6 @@
  *******************************************************************************/
 package interfaces
 
-//import "github.com/edgexfoundry/edgex-go/internal/pkg/config"
-
 type ConfigurationStruct struct {
 	ReadMaxLimit          int
 	ValidateCheck         bool
@@ -29,8 +27,6 @@ type ConfigurationStruct struct {
 	EnableRemoteLogging   bool
 	OsLevelOperations     bool
 	DockerLevelOperations bool
-	//Clients               map[string]config.ClientInfo
-	//Service               config.ServiceInfo
 	OperationsType string
 	ComposeUrl     string
 }
