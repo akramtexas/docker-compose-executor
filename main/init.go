@@ -15,10 +15,31 @@ package main
 
 import (
 	"github.com/edgexfoundry/docker-compose-executor/interfaces"
+	"github.com/edgexfoundry/docker-compose-executor/startup"
 )
 
 // Global variables
 var Configuration *interfaces.ConfigurationStruct
+var Conf = &interfaces.ConfigurationStruct{}
+var err error
+
+func Retry() {
+
+	if Configuration == nil {
+		Configuration, err = initializeConfiguration()
+	}
+	return
+}
+
+func initializeConfiguration() (*interfaces.ConfigurationStruct, error) {
+	//We currently have to load configuration from filesystem first in order to obtain ConsulHost/Port
+	err := startup.LoadFromFile(Conf)
+	if err != nil {
+		return nil, err
+	}
+
+	return Conf, nil
+}
 
 func setLoggingTarget() string {
 	logTarget := Configuration.LoggingRemoteURL
