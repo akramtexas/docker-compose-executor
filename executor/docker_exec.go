@@ -36,17 +36,17 @@ var services = map[string]string{
 type ExecuteDockerCompose struct {
 }
 
-func (ec *ExecuteDockerCompose) ServiceStarter(service string) error {
+func (ec *ExecuteDockerCompose) Start(service string) error {
 	error := ExecuteDockerCommands(service, "start")
 	return error
 }
 
-func (ec *ExecuteDockerCompose) ServiceStopper(service string) error {
+func (ec *ExecuteDockerCompose) Stop(service string) error {
 	error := ExecuteDockerCommands(service, "stop")
 	return error
 }
 
-func (ec *ExecuteDockerCompose) ServiceRestarter(service string) error {
+func (ec *ExecuteDockerCompose) Restart(service string) error {
 	error := ExecuteDockerCommands(service, "restart")
 	return error
 }
@@ -132,7 +132,7 @@ func runDockerCommands(service string, dockerService string, operation string) {
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		LoggingClient.Warn("docker command failed", "error message", err.Error())
-		LoggingClient.Warn("associated ouptut", "error message", out)
+		LoggingClient.Warn("associated ouptut", "error message", string(out))
 	}
 
 	if operation == "start" {
