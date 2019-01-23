@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"github.com/edgexfoundry/docker-compose-executor/executor"
 	"github.com/edgexfoundry/docker-compose-executor/interfaces"
@@ -32,6 +31,79 @@ Common Options:
     -h, --help                       Show this message
 `
 
+//var executorClient interface{}
+
+const (
+	START   = "start"
+	STOP    = "stop"
+	RESTART = "restart"
+)
+
+var executorClient interface{}
+
+func main() {
+
+	var service = ""
+	var operation = ""
+
+	if len(os.Args) > 2 {
+		service = os.Args[1]
+		operation = os.Args[2]
+
+		switch operation {
+		case START:
+			if starter, ok := executorClient.(interfaces.ServiceStarter); ok {
+				err := starter.Start(service)
+				if err != nil {
+					//msg := fmt.Sprintf("error starting service \"%s\": %v", service, err)
+					//executor.LoggingClient.Error(msg)
+					fmt.Println("error starting service: ", service)
+				}
+			} else {
+				//executor.LoggingClient.Info(fmt.Sprintf("starting service {%s} succeeded", service))
+				fmt.Println("success in starting service: ", service)
+			}
+			break
+
+		case STOP:
+			if stopper, ok := executorClient.(interfaces.ServiceStopper); ok {
+				err := stopper.Stop(service)
+				if err != nil {
+					//msg := fmt.Sprintf("error stopping service \"%s\": %v", service, err)
+					//executor.LoggingClient.Error(msg)
+					fmt.Println("error stopping service: ", service)
+				}
+			} else {
+				//executor.LoggingClient.Info(fmt.Sprintf("stopping service {%s} succeeded", service))
+				fmt.Println("success in stopping service: ", service)
+			}
+			break
+
+		case RESTART:
+			if restarter, ok := executorClient.(interfaces.ServiceRestarter); ok {
+				err := restarter.Restart(service)
+				if err != nil {
+					//msg := fmt.Sprintf("error restarting service \"%s\": %v", service, err)
+					//executor.LoggingClient.Error(msg)
+					fmt.Println("error restarting service: ", service)
+				}
+			} else {
+				//executor.LoggingClient.Info(fmt.Sprintf("restarting service {%s} succeeded", service))
+				fmt.Println("success in restarting service: ", service)
+			}
+			break
+
+		default:
+			executor.LoggingClient.Info("unknown operation was requested: ", operation)
+			break
+
+		}
+	}
+}
+
+// TODO: clean up main() version below.
+
+/*
 func main() {
 
 	start := time.Now()
@@ -45,11 +117,11 @@ func main() {
 
 	ok := Init()
 	if !ok {
-		logBeforeInit(fmt.Errorf("%s: Service bootstrap failed!", "docker-compose-executor"))
+		logBeforeInit(fmt.Errorf("%s: service bootstrap failed", "docker-compose-executor"))
 		os.Exit(1)
 	}
 
-	executor.LoggingClient.Info("Service dependencies resolved...")
+	executor.LoggingClient.Info("Application dependencies resolved...")
 	executor.LoggingClient.Info(fmt.Sprintf("Starting the %s application...", "docker-compose-executor"))
 
 	http.TimeoutHandler(nil, time.Millisecond*time.Duration(Configuration.ServiceTimeout), "Request timed out")
@@ -60,14 +132,22 @@ func main() {
 	startHttpServer(errs, Configuration.ServicePort)
 
 	// Time it took to start service
-	executor.LoggingClient.Info("Service started in: " + time.Since(start).String())
+	executor.LoggingClient.Info("Application started in: " + time.Since(start).String())
 	executor.LoggingClient.Info("Listening on port: " + strconv.Itoa(Configuration.ServicePort))
 	c := <-errs
 	executor.LoggingClient.Warn(fmt.Sprintf("terminating: %v", c))
 
+	argsWithProg := os.Args
+	argsWithoutProg := os.Args[1:]
+	arg := os.Args[3]
+
+	fmt.Println(argsWithProg)
+	fmt.Println(argsWithoutProg)
+	fmt.Println(arg)
+
 	os.Exit(0)
 }
-
+*/
 func Retry(useConsul bool, useProfile string, timeout int, wait *sync.WaitGroup, ch chan error) {
 	until := time.Now().Add(time.Millisecond * time.Duration(timeout))
 	for time.Now().Before(until) {
