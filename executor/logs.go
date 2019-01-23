@@ -22,5 +22,5 @@ import (
 var LoggingClient logger.LoggingClient
 
 func BuildLoggingClient(config *interfaces.ConfigurationStruct, logTarget string) {
-	LoggingClient = logger.NewClient(SystemManagementAgentServiceKey, config.EnableRemoteLogging, logTarget, config.LoggingLevel)
+	LoggingClient = logger.NewClient(config.ApplicationName, config.EnableRemoteLogging, logTarget, config.LoggingLevel)
 }

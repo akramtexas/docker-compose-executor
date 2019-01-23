@@ -14,11 +14,12 @@
 package interfaces
 
 const (
-	BootTimeoutDefault   = 30000
-	ConfigFileName       = "configuration.toml"
+	BootTimeoutDefault = 30000
+	ConfigFileName     = "configuration.toml"
 )
 
 type ConfigurationStruct struct {
+	ApplicationName       string
 	ReadMaxLimit          int
 	ValidateCheck         bool
 	AppOpenMsg            string
@@ -32,6 +33,6 @@ type ConfigurationStruct struct {
 	EnableRemoteLogging   bool
 	OsLevelOperations     bool
 	DockerLevelOperations bool
-	OperationsType string
-	ComposeUrl     string
+	OperationsType        string
+	ComposeUrl            string
 }
