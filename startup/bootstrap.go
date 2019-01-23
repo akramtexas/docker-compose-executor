@@ -12,36 +12,3 @@
  * the License.
  *******************************************************************************/
 package startup
-
-import "sync"
-
-type RetryFunc func(useConsul bool, useProfile string, timeout int, wait *sync.WaitGroup, ch chan error)
-
-type LogFunc func(err error)
-
-type BootParams struct {
-	UseConsul   bool
-	UseProfile  string
-	BootTimeout int
-}
-
-func Bootstrap(params BootParams, retry RetryFunc, log LogFunc) {
-	deps := make(chan error, 2)
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go retry(params.UseConsul, params.UseProfile, params.BootTimeout, &wg, deps)
-	go func(ch chan error) {
-		for {
-			select {
-			case e, ok := <-ch:
-				if ok {
-					log(e)
-				} else {
-					return
-				}
-			}
-		}
-	}(deps)
-
-	wg.Wait()
-}

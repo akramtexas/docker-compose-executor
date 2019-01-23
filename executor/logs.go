@@ -13,14 +13,3 @@
  *******************************************************************************/
 
 package executor
-
-import (
-	"github.com/edgexfoundry/docker-compose-executor/interfaces"
-	"github.com/edgexfoundry/edgex-go/pkg/clients/logging"
-)
-
-var LoggingClient logger.LoggingClient
-
-func BuildLoggingClient(config *interfaces.ConfigurationStruct, logTarget string) {
-	LoggingClient = logger.NewClient(config.ApplicationName, config.EnableRemoteLogging, logTarget, config.LoggingLevel)
-}

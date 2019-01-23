@@ -13,26 +13,3 @@
  *******************************************************************************/
 package interfaces
 
-const (
-	BootTimeoutDefault = 30000
-	ConfigFileName     = "configuration.toml"
-)
-
-type ConfigurationStruct struct {
-	ApplicationName       string
-	ReadMaxLimit          int
-	ValidateCheck         bool
-	AppOpenMsg            string
-	FormatSpecifier       string
-	ServicePort           int
-	ServiceTimeout        int
-	ServiceAddress        string
-	LoggingFile           string
-	LoggingRemoteURL      string
-	LoggingLevel          string
-	EnableRemoteLogging   bool
-	OsLevelOperations     bool
-	DockerLevelOperations bool
-	OperationsType        string
-	ComposeUrl            string
-}

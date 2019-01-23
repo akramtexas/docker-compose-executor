@@ -60,7 +60,7 @@ func findDockerContainerStatus(service string, status string) bool {
 	cmdName := "docker"
 	cmdArgs := []string{"ps"}
 	if cmdOut, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
-		LoggingClient.Error("error running the docker command", "error message", err.Error())
+		fmt.Println("error running the docker command", "error message", err.Error())
 		os.Exit(1)
 	}
 	dockerOutput := string(cmdOut)
@@ -70,18 +70,18 @@ func findDockerContainerStatus(service string, status string) bool {
 
 			if status == "Up" {
 				if strings.Contains(line, "Up") {
-					LoggingClient.Debug("container started", "service name", service, "details", line)
+					fmt.Println("container started", "service name", service, "details", line)
 					return true
 				} else {
-					LoggingClient.Warn("container NOT started", "service name", service)
+					fmt.Println("container NOT started", "service name", service)
 					return false
 				}
 			} else if status == "Exited" {
 				if strings.Contains(line, "Exited") {
-					LoggingClient.Debug("container stopped", "service name", service, "details", line)
+					fmt.Println("container stopped", "service name", service, "details", line)
 					return true
 				} else {
-					LoggingClient.Warn("container NOT stopped", "service name", service)
+					fmt.Println("container NOT stopped", "service name", service)
 					return false
 				}
 			}
@@ -99,7 +99,7 @@ func ExecuteDockerCommands(service string, operation string) error {
 		return nil
 	} else {
 		newError := fmt.Errorf("unknown service: %v", service)
-		LoggingClient.Error(newError.Error())
+		fmt.Println(newError.Error())
 
 		return newError
 	}
@@ -122,7 +122,7 @@ func runDockerCommands(service string, dockerService string, operation string) {
 		return attempt < 5, err
 	})
 	if err != nil {
-		LoggingClient.Error("unable to find the path to where the docker command will be run", "error message", err.Error())
+		fmt.Println("unable to find the path to where the docker command will be run", "error message", err.Error())
 	}
 
 	cmdArgs := []string{operation, dockerService}
@@ -131,17 +131,17 @@ func runDockerCommands(service string, dockerService string, operation string) {
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		LoggingClient.Warn("docker command failed", "error message", err.Error())
-		LoggingClient.Warn("associated ouptut", "error message", string(out))
+		fmt.Println("docker command failed", "error message", err.Error())
+		fmt.Println("associated ouptut", "error message", string(out))
 	}
 
 	if operation == "start" {
 		if !findDockerContainerStatus(service, "Up") {
-			LoggingClient.Warn("docker start operation failed", "service name", service)
+			fmt.Println("docker start operation failed", "service name", service)
 		}
 	} else if operation == "stop" {
 		if !findDockerContainerStatus(service, "Exited") {
-			LoggingClient.Warn("docker stop operation failed", "service name", service)
+			fmt.Println("docker stop operation failed", "service name", service)
 		}
 	}
 }
@@ -154,7 +154,7 @@ func findPathToRunDocker() (string, error) {
 	cmd := exec.Command(cmdName)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		LoggingClient.Error("exec.Command(cmdName) failed", "error message", err.Error())
+		fmt.Println("exec.Command(cmdName) failed", "error message", err.Error())
 	}
 	pathOutput := string(out)
 
