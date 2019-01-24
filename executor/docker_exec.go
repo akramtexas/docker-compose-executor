@@ -63,7 +63,9 @@ func findDockerContainerStatus(service string, status string) bool {
 		fmt.Println("error running the docker command", "error message", err.Error())
 		os.Exit(1)
 	}
+
 	dockerOutput := string(cmdOut)
+
 	// Find whether the container to start has started.
 	for _, line := range strings.Split(strings.TrimSuffix(dockerOutput, "\n"), "\n") {
 		if strings.Contains(line, service) {
@@ -114,28 +116,23 @@ func runDockerCommands(service string, dockerService string, operation string) {
 
 	cmdName := "docker"
 
-	// Retry finding the path to where the docker command will be run.
-	err = Do(func(attempt int) (bool, error) {
-		var err error
-		cmdDir, err = findPathToRunDocker()
-		// Try 5 times
-		return attempt < 5, err
-	})
-	if err != nil {
-		fmt.Println("unable to find the path to where the docker command will be run", "error message", err.Error())
-	}
-
 	cmdArgs := []string{operation, dockerService}
 	cmd := exec.Command(cmdName, cmdArgs...)
 	cmd.Dir = cmdDir
 
+	/*
+	A call to exec.CombinedOutput will return a nil or 1 (via err), along with the standard
+	output, back to the SMA.
+	A return of string 0 indicates that the execution completed its task and exited “normally” or without issue.
+	A return of string 1 indicates that the execution did not complete “normally” and the caller should check
+	the standard error for more information. The Executor should always return some information string indicting
+	why the non-normal return when 1 is returned on the standard out.
+	*/
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println("docker command failed", "error message", err.Error())
-		fmt.Println("associated ouptut", "error message", string(out))
-	}
-
-	if operation == "start" {
+		fmt.Println("associated output", "error message", string(out))
+	} else if operation == "start" {
 		if !findDockerContainerStatus(service, "Up") {
 			fmt.Println("docker start operation failed", "service name", service)
 		}
@@ -143,22 +140,9 @@ func runDockerCommands(service string, dockerService string, operation string) {
 		if !findDockerContainerStatus(service, "Exited") {
 			fmt.Println("docker stop operation failed", "service name", service)
 		}
+	} else if operation == "restart" {
+		if !findDockerContainerStatus(service, "Up") {
+			fmt.Println("docker restart operation failed", "service name", service)
+		}
 	}
-}
-
-func findPathToRunDocker() (string, error) {
-
-	// Determine the directory (in the deployed filesystem) from where docker will be executed.
-	cmdName := "pwd"
-
-	cmd := exec.Command(cmdName)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println("exec.Command(cmdName) failed", "error message", err.Error())
-	}
-	pathOutput := string(out)
-
-	path := strings.TrimSuffix(pathOutput, "\n")
-
-	return path, err
 }

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"github.com/edgexfoundry/docker-compose-executor/executor"
 	"github.com/edgexfoundry/docker-compose-executor/interfaces"
 	"os"
 	"time"
@@ -11,6 +13,13 @@ import (
 var executorClient interface{}
 var err error
 
+var usageStr = `
+Usage: ./main service operation		Start app with requested {service} and {operation}
+       -h							Show this message
+`
+
+//var executorClient interface{}
+
 const (
 	START           = "start"
 	STOP            = "stop"
@@ -19,16 +28,27 @@ const (
 	AppOpenMsg      = "This is the docker-compose-executor application!"
 )
 
+// usage will print out the flag options for the app.
+func HelpCallback() {
+	msg := fmt.Sprintf(usageStr, os.Args[0])
+	fmt.Printf("%s\n", msg)
+	os.Exit(0)
+}
+
 func main() {
 
 	start := time.Now()
 
-	fmt.Println("Application dependencies resolved...")
+	flag.Usage = HelpCallback
+	flag.Parse()
+
 	fmt.Println(fmt.Sprintf("Starting the %s application...", ApplicationName))
 	fmt.Println(AppOpenMsg)
 
 	// Time it took to start service
 	fmt.Println("Application started in: " + time.Since(start).String())
+
+	executorClient, err = newExecutorClient()
 
 	var service = ""
 	var operation = ""
@@ -42,12 +62,9 @@ func main() {
 			if starter, ok := executorClient.(interfaces.ServiceStarter); ok {
 				err := starter.Start(service)
 				if err != nil {
-					//msg := fmt.Sprintf("error starting service \"%s\": %v", service, err)
-					//fmt.Println.Error(msg)
 					fmt.Println("error starting service: ", service)
 				}
 			} else {
-				//fmt.Println.Info(fmt.Sprintf("starting service {%s} succeeded", service))
 				fmt.Println("success in starting service: ", service)
 			}
 			break
@@ -56,12 +73,9 @@ func main() {
 			if stopper, ok := executorClient.(interfaces.ServiceStopper); ok {
 				err := stopper.Stop(service)
 				if err != nil {
-					//msg := fmt.Sprintf("error stopping service \"%s\": %v", service, err)
-					//fmt.Println.Error(msg)
 					fmt.Println("error stopping service: ", service)
 				}
 			} else {
-				//fmt.Println.Info(fmt.Sprintf("stopping service {%s} succeeded", service))
 				fmt.Println("success in stopping service: ", service)
 			}
 			break
@@ -70,12 +84,9 @@ func main() {
 			if restarter, ok := executorClient.(interfaces.ServiceRestarter); ok {
 				err := restarter.Restart(service)
 				if err != nil {
-					//msg := fmt.Sprintf("error restarting service \"%s\": %v", service, err)
-					//fmt.Println.Error(msg)
 					fmt.Println("error restarting service: ", service)
 				}
 			} else {
-				//fmt.Println.Info(fmt.Sprintf("restarting service {%s} succeeded", service))
 				fmt.Println("success in restarting service: ", service)
 			}
 			break
@@ -87,3 +98,12 @@ func main() {
 		}
 	}
 }
+
+func newExecutorClient() (interface{}, error) {
+
+	return &executor.ExecuteDockerCompose{}, nil
+}
+
+/*type ExecuteApp struct {
+}
+*/

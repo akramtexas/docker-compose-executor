@@ -1,4 +1,2 @@
 ApplicationName = 'docker-compose-executor'
 AppOpenMsg = 'This is the docker-compose-executor application!'
-EnableRemoteLogging = false
-ServicePort = 48099
